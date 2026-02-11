@@ -43,11 +43,39 @@ https://ray2clash.example.workers.dev/?url=https://example.com/sub/123456
 
 This will download a `clash-config.yaml` file that you can import directly into Clash for Windows, ClashX, or other compatible clients.
 
-## Development
+## Local Deployment
 
-To run locally:
+You can deploy this as a standalone Node.js service using PM2 or similar process managers.
+
+### 1. Simple Run
 ```bash
 npm start
+```
+By default, it listens on `0.0.0.0:8787`.
+
+### 2. Using PM2
+```bash
+# Start with default settings
+pm2 start src/server.js --name ray2clash
+
+# Start with custom port and host
+PORT=9000 HOST=127.0.0.1 pm2 start src/server.js --name ray2clash --interpreter node
+```
+
+### 3. Environment Variables
+- `PORT`: The port to listen on (default: `8787`)
+- `HOST`: The host to bind to (default: `0.0.0.0`)
+
+## Development
+
+To run locally for development:
+```bash
+npm start
+```
+
+To run as a Cloudflare Worker dev server:
+```bash
+npm run dev
 ```
 
 To run tests:

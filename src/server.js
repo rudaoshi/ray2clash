@@ -3,6 +3,7 @@ import http from 'http';
 import { handleRequest } from './parser.js';
 
 const PORT = process.env.PORT || 8787;
+const HOST = process.env.HOST || '0.0.0.0';
 
 const server = http.createServer(async (req, res) => {
     const protocol = req.socket.encrypted ? 'https' : 'http';
@@ -26,7 +27,7 @@ const server = http.createServer(async (req, res) => {
     }
 });
 
-server.listen(PORT, () => {
-    console.log(`Local server running at http://localhost:${PORT}/`);
-    console.log(`Usage: http://localhost:${PORT}/?url=YOUR_SUB_LINK`);
+server.listen(PORT, HOST, () => {
+    console.log(`Local server running at http://${HOST === '0.0.0.0' ? 'localhost' : HOST}:${PORT}/`);
+    console.log(`Usage: http://${HOST === '0.0.0.0' ? 'localhost' : HOST}:${PORT}/?url=YOUR_SUB_LINK`);
 });
