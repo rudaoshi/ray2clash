@@ -49,9 +49,15 @@ function decodeBase64(str) {
         base64 += '=';
     }
     try {
-        return atob(base64);
+        const binaryStr = atob(base64);
+        // Properly decode UTF-8
+        const bytes = new Uint8Array(binaryStr.length);
+        for (let i = 0; i < binaryStr.length; i++) {
+            bytes[i] = binaryStr.charCodeAt(i);
+        }
+        return new TextDecoder('utf-8').decode(bytes);
     } catch (e) {
-        // Return original if decoding fails, it might be plain text or different format
+        // Return original if decoding fails
         return str;
     }
 }
@@ -106,8 +112,8 @@ function parseVmess(url) {
         alterId: parseInt(config.aid || 0),
         cipher: config.scy || 'auto',
         tls: config.tls === 'tls',
-        skipdatasafe: false,
-        servername: config.sni || '',
+        'skip-cert-verify': true, // v2ray_subscribe suggests allowInsecure=True 
+        servername: config.sni || config.host || '', // Use host as fallback for sni
         network: config.net || 'tcp',
         'ws-opts': config.net === 'ws' ? {
             path: config.path || '/',
