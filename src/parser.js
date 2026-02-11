@@ -1,7 +1,7 @@
 
-const yaml = require('js-yaml');
+import yaml from 'js-yaml';
 
-async function handleRequest(requestUrl) {
+export async function handleRequest(requestUrl) {
     const url = new URL(requestUrl);
     const subUrl = url.searchParams.get('url');
 
@@ -50,22 +50,18 @@ async function handleRequest(requestUrl) {
 }
 
 function decodeBase64(str) {
-    // Fix common base64 url safe replacements
     let base64 = str.replace(/-/g, '+').replace(/_/g, '/');
-    // Add padding
     while (base64.length % 4) {
         base64 += '=';
     }
     try {
         const binaryStr = atob(base64);
-        // Properly decode UTF-8
         const bytes = new Uint8Array(binaryStr.length);
         for (let i = 0; i < binaryStr.length; i++) {
             bytes[i] = binaryStr.charCodeAt(i);
         }
         return new TextDecoder('utf-8').decode(bytes);
     } catch (e) {
-        // Return original if decoding fails
         return str;
     }
 }
@@ -137,7 +133,6 @@ function parseVless(url) {
     try {
         const safeUrl = url.replace('vless://', 'http://');
         const parsed = new URL(safeUrl);
-
         const params = parsed.searchParams;
         const name = parsed.hash ? parsed.hash.slice(1) : 'vless';
 
@@ -176,7 +171,6 @@ function parseVless(url) {
 
         return proxy;
     } catch (e) {
-        console.error('Vless parse error', e);
         return null;
     }
 }
@@ -185,7 +179,6 @@ function parseTrojan(url) {
     try {
         const safeUrl = url.replace('trojan://', 'http://');
         const parsed = new URL(safeUrl);
-
         const params = parsed.searchParams;
         const name = parsed.hash ? parsed.hash.slice(1) : 'trojan';
 
@@ -200,14 +193,11 @@ function parseTrojan(url) {
             'skip-cert-verify': params.get('allowInsecure') === '1',
         };
     } catch (e) {
-        console.error('Trojan parse error', e);
         return null;
     }
 }
 
 function parseShadowsocks(url) {
-    // ss://base64(method:password)@server:port
-    // ss://base64(method:password)@server:port/?plugin=...#name
     let raw = url.slice(5);
     let name = 'ss';
     const hashIndex = raw.indexOf('#');
@@ -216,7 +206,6 @@ function parseShadowsocks(url) {
         raw = raw.slice(0, hashIndex);
     }
 
-    // Check for query params (plugins)
     let params = new URLSearchParams();
     const qIndex = raw.indexOf('?');
     if (qIndex !== -1) {
@@ -234,7 +223,6 @@ function parseShadowsocks(url) {
             } else {
                 [method, password] = parts[0].split(':');
             }
-
             const serverPart = parts[1];
             const lastColon = serverPart.lastIndexOf(':');
             server = serverPart.slice(0, lastColon);
@@ -245,7 +233,6 @@ function parseShadowsocks(url) {
             const userInfo = decoded.slice(0, atIndex);
             const serverInfo = decoded.slice(atIndex + 1);
             [method, password] = userInfo.split(':');
-
             const lastColon = serverInfo.lastIndexOf(':');
             server = serverInfo.slice(0, lastColon);
             port = serverInfo.slice(lastColon + 1);
@@ -261,14 +248,12 @@ function parseShadowsocks(url) {
             udp: true
         };
 
-        // Handle plugins
         const pluginStr = params.get('plugin');
         if (pluginStr) {
             const decodedPlugin = decodeURIComponent(pluginStr);
             const parts = decodedPlugin.split(';');
             const pluginName = parts[0];
             const pluginOpts = {};
-
             for (let i = 1; i < parts.length; i++) {
                 const [key, val] = parts[i].split('=');
                 if (key && val) {
@@ -292,17 +277,14 @@ function parseShadowsocks(url) {
                 };
             }
         }
-
         return proxy;
     } catch (e) {
-        console.error('SS parse error', e);
         return null;
     }
 }
 
 function generateClashConfig(proxies) {
     const proxyNames = proxies.map(p => p.name);
-
     return {
         'port': 7890,
         'socks-port': 7891,
@@ -443,5 +425,3 @@ function generateClashConfig(proxies) {
         ]
     };
 }
-
-module.exports = { handleRequest };
