@@ -194,8 +194,8 @@ function parseTrojan(url) {
 }
 
 function parseShadowsocks(url) {
-    // ss://base64(method:password@server:port)#name
-    // ss://base64(method:password)@server:port#name
+    // ss://base64(method:password)@server:port
+    // ss://base64(method:password)@server:port/?plugin=...#name
     let raw = url.slice(5);
     let name = 'ss';
     const hashIndex = raw.indexOf('#');
@@ -204,16 +204,22 @@ function parseShadowsocks(url) {
         raw = raw.slice(0, hashIndex);
     }
 
+    // Check for query params (plugins)
+    let params = new URLSearchParams();
+    const qIndex = raw.indexOf('?');
+    if (qIndex !== -1) {
+        params = new URLSearchParams(raw.slice(qIndex));
+        raw = raw.slice(0, qIndex);
+    }
+
     try {
         let method, password, server, port;
         if (raw.includes('@')) {
             const parts = raw.split('@');
-            // If the first part is base64 encoded user info
             if (!parts[0].includes(':')) {
                 const userInfo = decodeBase64(parts[0]);
                 [method, password] = userInfo.split(':');
             } else {
-                // raw format method:password
                 [method, password] = parts[0].split(':');
             }
 
@@ -222,8 +228,7 @@ function parseShadowsocks(url) {
             server = serverPart.slice(0, lastColon);
             port = serverPart.slice(lastColon + 1);
         } else {
-            // Old legacy format: everything base64 encoded
-            const decoded = decodeBase64(raw); // method:password@server:port
+            const decoded = decodeBase64(raw);
             const atIndex = decoded.lastIndexOf('@');
             const userInfo = decoded.slice(0, atIndex);
             const serverInfo = decoded.slice(atIndex + 1);
@@ -234,7 +239,7 @@ function parseShadowsocks(url) {
             port = serverInfo.slice(lastColon + 1);
         }
 
-        return {
+        const proxy = {
             name: name,
             type: 'ss',
             server: server,
@@ -243,6 +248,42 @@ function parseShadowsocks(url) {
             password: password,
             udp: true
         };
+
+        // Handle plugins
+        const pluginStr = params.get('plugin');
+        if (pluginStr) {
+            // Plugin format: plugin-name;opt1=val1;opt2=val2
+            // Sometimes URL encoded
+            const decodedPlugin = decodeURIComponent(pluginStr);
+            const parts = decodedPlugin.split(';');
+            const pluginName = parts[0];
+            const pluginOpts = {};
+
+            for (let i = 1; i < parts.length; i++) {
+                const [key, val] = parts[i].split('=');
+                if (key && val) {
+                    pluginOpts[key] = val;
+                }
+            }
+
+            if (pluginName === 'obfs-local' || pluginName === 'simple-obfs') {
+                proxy.plugin = 'obfs';
+                proxy['plugin-opts'] = {
+                    mode: pluginOpts.obfs || 'http',
+                    host: pluginOpts['obfs-host'] || ''
+                };
+            } else if (pluginName === 'v2ray-plugin') {
+                proxy.plugin = 'v2ray-plugin';
+                proxy['plugin-opts'] = {
+                    mode: pluginOpts.mode || 'websocket',
+                    host: pluginOpts.host || '',
+                    path: pluginOpts.path || '/',
+                    tls: pluginOpts.tls === 'tls' || pluginOpts.tls === 'true'
+                };
+            }
+        }
+
+        return proxy;
     } catch (e) {
         console.error('SS parse error', e);
         return null;
