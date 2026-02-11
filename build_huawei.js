@@ -7,7 +7,11 @@ esbuild.build({
     outfile: 'dist/huawei/index.js',
     platform: 'node',
     target: 'node16.17',
-    external: [], // List any externals if needed, but for FunctionGraph we usually want to bundle everything
+    format: 'cjs',
+    bundle: true,
+    minify: false, // Keep it readable for debugging
+    sourcemap: false,
+    external: [],
+}).then(() => {
+    console.log('Build complete: dist/huawei/index.js');
 }).catch(() => process.exit(1));
-
-console.log('Build complete: dist/huawei/index.js');
