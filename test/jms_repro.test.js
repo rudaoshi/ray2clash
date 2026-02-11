@@ -4,7 +4,9 @@ import worker from '../src/index.js';
 import fs from 'fs';
 
 // Read the actual fetched content
-const jmsContent = fs.readFileSync('jms_sub.txt', 'utf-8').trim();
+// Hardcoded content from previous fetch
+const jmsContent = Buffer.from(`ss://YWVzLTI1Ni1nY206cFp3RUxwSkF6YkpwYmd5NEAxMDQuMTYwLjQ0LjEzOToxNjYwOQ#JMS-959113@c77s1.portablesubmarines.com:16609
+vmess://eyJwcyI6IkpNUy05NTkxMTNAYzc3czMucG9ydGFibGVzdWJtYXJpbmVzLmNvbToxNjYwOSIsInBvcnQiOiIxNjYwOSIsImlkIjoiOGYxYWE2MjctZjVhZS00ZWNiLWE1NmYtYjBlYzhkNzY1OTAxIiwiYWlkIjowLCJuZXQiOiJ0Y3AiLCJ0eXBlIjoibm9uZSIsInRscyI6Im5vbmUiLCJhZGQiOiIxOTguMzUuNDYuMjIwIn0`).toString('base64');
 
 describe('Ray2Clash Worker - JMS Repro', () => {
     it('should parse JMS subscription correctly', async () => {
