@@ -1,7 +1,7 @@
 
-import yaml from 'js-yaml';
+const yaml = require('js-yaml');
 
-export async function handleRequest(requestUrl) {
+async function handleRequest(requestUrl) {
     const url = new URL(requestUrl);
     const subUrl = url.searchParams.get('url');
 
@@ -443,3 +443,5 @@ function generateClashConfig(proxies) {
         ]
     };
 }
+
+module.exports = { handleRequest };

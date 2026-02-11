@@ -1,6 +1,6 @@
 
-import http from 'http';
-import { handleRequest } from './logic.js';
+const http = require('http');
+const { handleRequest } = require('./logic.js');
 
 const PORT = process.env.PORT || 8787;
 
