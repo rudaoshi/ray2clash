@@ -1,5 +1,5 @@
 
-import { handleRequest } from './logic.js';
+import { handleRequest } from '../shared/parser.js';
 
 export default {
     async fetch(request, env, ctx) {

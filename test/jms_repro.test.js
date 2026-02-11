@@ -1,6 +1,6 @@
 
 import { describe, it, expect, vi } from 'vitest';
-import worker from '../src/index.js';
+import worker from '../src/cloudflare/index.js';
 import fs from 'fs';
 
 // Read the actual fetched content

@@ -5,9 +5,11 @@
   "scripts": {
     "start": "wrangler dev",
     "deploy": "wrangler deploy",
+    "build:huawei": "node build_huawei.js",
     "test": "vitest"
   },
   "devDependencies": {
+    "esbuild": "^0.27.3",
     "vite": "^7.3.1",
     "vitest": "^1.3.1",
     "wrangler": "^3.30.1"

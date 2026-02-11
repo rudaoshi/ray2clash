@@ -1,6 +1,6 @@
 
 const http = require('http');
-const { handleRequest } = require('./logic.js');
+const { handleRequest } = require('../shared/parser.js');
 
 const PORT = process.env.PORT || 8787;
 

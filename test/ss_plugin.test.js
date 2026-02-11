@@ -1,11 +1,10 @@
 
-const { parseShadowsocks } = require('../src/index.js'); // This won't work directly because src/index.js is ESM, need to adapt test
 
 // I'll create a standalone test file that copies the logic to verify, or uses vitest again with a new test case.
 // Better to add a test case to test/worker.test.js that includes plugins.
 
 import { describe, it, expect, vi } from 'vitest';
-import worker from '../src/index.js';
+import worker from '../src/cloudflare/index.js';
 
 // Helper to base64 encode for test strings
 const base64 = (str) => Buffer.from(str).toString('base64');

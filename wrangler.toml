@@ -1,5 +1,5 @@
 name = "ray2clash"
-main = "src/index.js"
+main = "src/cloudflare/index.js"
 compatibility_date = "2024-02-11"
 
 # [[kv_namespaces]]
