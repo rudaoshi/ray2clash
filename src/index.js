@@ -333,7 +333,12 @@ function generateClashConfig(proxies) {
             'DOMAIN-KEYWORD,google,PROXY',
             'DOMAIN,google.com,PROXY',
             'DOMAIN-SUFFIX,github.com,PROXY',
+            'DOMAIN-SUFFIX,twitter.com,PROXY',
+            'DOMAIN-SUFFIX,facebook.com,PROXY',
+            'DOMAIN-SUFFIX,instagram.com,PROXY',
+            'DOMAIN-SUFFIX,telegram.org,PROXY',
             'GEOIP,CN,DIRECT',
+            'DOMAIN-SUFFIX,cn,DIRECT',
             'MATCH,PROXY'
         ]
     };
