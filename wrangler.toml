@@ -1,0 +1,10 @@
+name = "ray2clash"
+main = "src/index.js"
+compatibility_date = "2024-02-11"
+
+# [[kv_namespaces]]
+# binding = "MY_KV_NAMESPACE"
+# id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+# [vars]
+# MY_VARIABLE = "my_value"
